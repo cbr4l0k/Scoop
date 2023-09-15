@@ -1,12 +1,20 @@
 use std::process::{Command, Child};
 use url::Url;
 
+/// `Scanner` represents a security scanner command and its arguments.
+///
+/// # Example
+/// ```
+/// let scanner = Scanner { command: "nmap", args: vec!["-p", "80,443", "localhost"]};
+/// ```
 #[derive(Debug)]
 pub struct Scanner<'a> {
     command: & 'a str,
     args: Vec<& 'a str>,
 }
 
+/// `ScannerType` represents the types of scanners that can be created. 
+/// Each variant corresponds to a specific security scanner.
 pub enum ScannerType {
     Dirsearch,
     Httpx,
@@ -16,6 +24,12 @@ pub enum ScannerType {
 }
 
 impl<'a> Scanner<'a>  {
+    /// Creates a new `Scanner` based on the provided `ScannerType`.
+    ///
+    /// # Example
+    /// ```
+    /// let scanner = Scanner::new(ScannerType::Dirsearch);
+    /// ```
     fn new(scanner_type: ScannerType) -> Self {
         match scanner_type {
             ScannerType::Dirsearch => Scanner {
@@ -64,6 +78,8 @@ macro_rules! create_scanner {
     };
 }
 
+/// `ScannerToolBox` is a trait that proves methods to scan URLs using  different security
+/// scanners.
 pub trait ScannerToolBox {
     fn scanner_dirsearch(&self) -> Child;
     fn scanner_httpx(&self) -> Child;
