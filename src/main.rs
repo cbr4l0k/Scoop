@@ -5,7 +5,7 @@ use scanners::ScannerToolBox;
 
 fn main() {
     let url = Url::parse("https://e-aulas.urosario.edu.co").unwrap();
-    let output = url.scanner_dirsearch()
+    let output = url.scanner_naabu()
         .wait()
         .expect("failed on wait");
 

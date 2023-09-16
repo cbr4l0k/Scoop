@@ -20,7 +20,9 @@ pub enum ScannerType {
     Httpx,
     Katana,
     Nuclei,
-    Waybackurls
+    Waybackurls,
+    Subfinder,
+    Naabu
 }
 
 impl<'a> Scanner<'a>  {
@@ -51,6 +53,14 @@ impl<'a> Scanner<'a>  {
             ScannerType::Waybackurls => Scanner {
                 command: "waybackurls",
                 args: vec!["URL"]
+            }, 
+            ScannerType::Subfinder => Scanner {
+                command: "subfinder",
+                args: vec!["-d", "HOST", "--silent"]
+            },
+            ScannerType::Naabu => Scanner {
+                command: "naabu",
+                args: vec!["-host", "HOST", "--silent"]
             }
         }
     }
@@ -64,6 +74,10 @@ macro_rules! create_scanner {
                 .map(|&arg| {
                     match arg {
                         "URL" => self.as_str(),
+                        "HOST" => self.host_str().expect(&format!(
+                        "Failed to get the host in the function {}", 
+                        stringify!($name)
+                )),
                         _ => arg,
                     } 
                 }).collect::<Vec<&str>>();
@@ -86,13 +100,17 @@ pub trait ScannerToolBox {
     fn scanner_katana(&self) -> Child;
     fn scanner_nuclei(&self) -> Child;
     fn scanner_waybackurls(&self) -> Child;
+    fn scanner_subfinder(&self) -> Child;
+    fn scanner_naabu(&self) -> Child;
 }
 
 impl ScannerToolBox for Url {
-    create_scanner!(scanner_dirsearch, Scanner::new(ScannerType::Dirsearch));   // Official url: https://github.com/maurosoria/dirsearch
-    create_scanner!(scanner_httpx, Scanner::new(ScannerType::Httpx));           // Official url: https://github.com/projectdiscovery/httpx
-    create_scanner!(scanner_katana, Scanner::new(ScannerType::Katana));         // Official url: https://github.com/projectdiscovery/katana
-    create_scanner!(scanner_nuclei, Scanner::new(ScannerType::Nuclei));         // Official url: https://github.com/projectdiscovery/nuclei
-    create_scanner!(scanner_waybackurls, Scanner::new(ScannerType::Waybackurls));  // Official url: https://github.com/tomnomnom/waybackurls
+    create_scanner!(scanner_dirsearch, Scanner::new(ScannerType::Dirsearch));       // Official url: https://github.com/maurosoria/dirsearch
+    create_scanner!(scanner_httpx, Scanner::new(ScannerType::Httpx));               // Official url: https://github.com/projectdiscovery/httpx
+    create_scanner!(scanner_katana, Scanner::new(ScannerType::Katana));             // Official url: https://github.com/projectdiscovery/katana
+    create_scanner!(scanner_nuclei, Scanner::new(ScannerType::Nuclei));             // Official url: https://github.com/projectdiscovery/nuclei
+    create_scanner!(scanner_waybackurls, Scanner::new(ScannerType::Waybackurls));   // Official url: https://github.com/tomnomnom/waybackurls
+    create_scanner!(scanner_subfinder, Scanner::new(ScannerType::Subfinder));       // Official url: https://github.com/projectdiscovery/subfinder
+    create_scanner!(scanner_naabu, Scanner::new(ScannerType::Naabu));               // Official url: https://github.com/projectdiscovery/naabu
 }
 
